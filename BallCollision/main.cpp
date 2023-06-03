@@ -12,8 +12,8 @@ struct Ball
 {
     sf::Vector2f p;
     sf::Vector2f dir;
-    float r = 0;
-    float speed = 0;
+    float r = 0.f;
+    float speed = 0.f;
 };
 
 void draw_ball(sf::RenderWindow& window, const Ball& ball)
@@ -98,12 +98,12 @@ int main()
         }
 
         window.clear();
-        for (const auto ball : balls)
+        for (const auto& ball : balls)
         {
             draw_ball(window, ball);
         }
 
-		//draw_fps(window, fpscounter.getAverage());
+		draw_fps(window, fpscounter.getAverage());
 		window.display();
     }
     return 0;
