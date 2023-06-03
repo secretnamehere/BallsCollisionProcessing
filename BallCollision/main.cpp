@@ -1,50 +1,44 @@
+#pragma once
+
 #include "SFML/Graphics.hpp"
 #include "MiddleAverageFilter.h"
-#include "CollisionHandler.h"
+#include "BallCollisionHandler.h"
+#include "Ball.h"
 
 constexpr int WINDOW_X = 1024;
 constexpr int WINDOW_Y = 768;
-constexpr int MAX_BALLS = 300;
-constexpr int MIN_BALLS = 100;
+constexpr int MAX_BALLS = 150;
+constexpr int MIN_BALLS = 50;
 
 Math::MiddleAverageFilter<float, 100> fpscounter;
 
-struct Ball
+void draw_ball(sf::RenderWindow& iWindow, Ball& iBall)
 {
-    sf::Vector2f p;
-    sf::Vector2f dir;
-    float r = 0.f;
-    float speed = 0.f;
-};
-
-void draw_ball(sf::RenderWindow& window, const Ball& ball)
-{
-    sf::CircleShape gball;
-    gball.setRadius(ball.r);
-    gball.setPosition(ball.p.x, ball.p.y);
-    window.draw(gball);
+  iBall.Draw(iWindow);
 }
 
-void move_ball(Ball& ball, float deltaTime)
+void move_ball(Ball& iBall, float iDeltaTime)
 {
-    float dx = ball.dir.x * ball.speed * deltaTime;
-    float dy = ball.dir.y * ball.speed * deltaTime;
-    ball.p.x += dx;
-    ball.p.y += dy;
+  auto dir = iBall.GetDirection();
+  auto speed = iBall.GetSpeed();
+  auto pos = iBall.GetPosition();
+
+  float dx = dir.x * speed * iDeltaTime;
+  float dy = dir.y * speed * iDeltaTime;
+  iBall.SetPosition({ pos.x += dx, pos.y += dy });
 }
 
 void draw_fps(sf::RenderWindow& window, float fps)
 {
     char c[32];
     snprintf(c, 32, "FPS: %f", fps);
-    std::string string(c);
     sf::String str(c);
     window.setTitle(str);
 }
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "ball collision demo");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "Ball collision demo");
     srand(time(NULL));
 
     std::vector<Ball> balls;
@@ -53,12 +47,10 @@ int main()
     for (int i = 0; i < (rand() % (MAX_BALLS - MIN_BALLS) + MIN_BALLS); i++)
     {
         Ball newBall;
-        newBall.p.x = rand() % WINDOW_X;
-        newBall.p.y = rand() % WINDOW_Y;
-        newBall.dir.x = (-5 + (rand() % 10)) / 3.;
-        newBall.dir.y = (-5 + (rand() % 10)) / 3.;
-        newBall.r = 5 + rand() % 5;
-        newBall.speed = 30 + rand() % 30;
+        newBall.SetPosition({ static_cast<float>(rand() % WINDOW_X), static_cast<float>(rand() % WINDOW_Y) });
+        newBall.SetDirection({ static_cast<float>((-5 + (rand() % 10))) / 3.f, static_cast<float>((-5 + (rand() % 10)) / 3.f) });
+        newBall.SetRadius(10 + rand() % 5);
+        newBall.SetSpeed(30 + rand() % 30);
         balls.push_back(newBall);
     }
 
@@ -66,15 +58,13 @@ int main()
 
     sf::Clock clock;
     float lastime = clock.restart().asSeconds();
+    BallCollisionHandler handler(&window);
 
     while (window.isOpen())
     {
-
         sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
                 window.close();
             }
         }
@@ -93,14 +83,14 @@ int main()
         /// Как можно было-бы улучшить текущую архитектуру кода?
         /// Данный код является макетом, вы можете его модифицировать по своему усмотрению
 
-        for (auto& ball : balls)
-        {
+        handler.ProcessCollisions(balls);
+
+        for (auto& ball : balls) {
             move_ball(ball, deltaTime);
         }
 
         window.clear();
-        for (const auto& ball : balls)
-        {
+        for (auto& ball : balls) { //No need to copy the ball in loop
             draw_ball(window, ball);
         }
 
