@@ -27,13 +27,13 @@ BallCollisionHandler::BallCollisionHandler(sf::RenderWindow* ipWindow)
 {
 }
 
-void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
+void BallCollisionHandler::Process(std::vector<Ball>& iaBalls)
 {
   if (iaBalls.empty())
     return;
 
   std::sort(iaBalls.begin(), iaBalls.end(), _comparator);
-  float sumx{ 0.f };
+  float sumx{ 0.f }; //for sample variance
   float sumy{ 0.f };
   float sumSqrx{ 0.f };
   float sumSqry{ 0.f };
@@ -48,7 +48,7 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
     for (size_t j = i + 1; j < iaBalls.size(); ++j) {
       auto& otherBall = iaBalls[j];
       if (!_comparator.HasProjectionsIntersection(curBall, otherBall))
-        break;
+        break; //vector is sorted so we can stop here
 
       HandleCollision(curBall, otherBall);
     }
@@ -64,7 +64,7 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
   _comparator.SetComparisonAxisIdx(maxVarIdx);
 }
 
-void BallCollisionHandler::ProcessCollisionsNaive(std::vector<Ball>& iaBalls)
+void BallCollisionHandler::ProcessNaive(std::vector<Ball>& iaBalls)
 {
   if (iaBalls.empty())
     return;
@@ -92,7 +92,7 @@ void BallCollisionHandler::HandleCollision(Ball& iFirst, Ball& iSecond)
     auto normalLen = static_cast<float>(std::sqrt(std::pow(normal.x, 2) + std::pow(normal.y, 2)));
     normal = sf::Vector2f(normal.x / normalLen, normal.y / normalLen);
 
-    DevideBalls(iFirst, iSecond, length, normal);
+    DevideBalls(iFirst, iSecond, length, normal); //Used for force devision of balls 
     HitBalls(iFirst, iSecond, length, normal);
 
     iFirst.SetRandomColor();
