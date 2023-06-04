@@ -21,7 +21,7 @@ private:
 
   static constexpr int WINDOW_X = 1024;
   static constexpr int WINDOW_Y = 768;
-  static constexpr int MAX_BALLS = 300;
-  static constexpr int MIN_BALLS = 50;
+  static constexpr int MAX_BALLS = 400;
+  static constexpr int MIN_BALLS = 300;
 };
 

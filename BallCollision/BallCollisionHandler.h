@@ -23,6 +23,7 @@ class BallCollisionHandler
 public:
   explicit BallCollisionHandler(sf::RenderWindow* ipWindow);
   void ProcessCollisions(std::vector<Ball>& iaBalls);
+  void ProcessCollisionsNaive(std::vector<Ball>& iaBalls); //for testing
 
 private:
   void HandleCollision(Ball& iFirst, Ball& iSecond);

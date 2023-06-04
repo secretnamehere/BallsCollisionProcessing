@@ -64,6 +64,21 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
   _comparator.SetComparisonAxisIdx(maxVarIdx);
 }
 
+void BallCollisionHandler::ProcessCollisionsNaive(std::vector<Ball>& iaBalls)
+{
+  if (iaBalls.empty())
+    return;
+
+  for (size_t i = 0; i < iaBalls.size(); ++i) {
+    auto& curBall = iaBalls[i];
+    HandleWindowCollision(curBall);
+    for (size_t j = i + 1; j < iaBalls.size(); ++j) {
+      auto& otherBall = iaBalls[j];
+      HandleCollision(curBall, otherBall);
+    }
+  }
+}
+
 void BallCollisionHandler::HandleCollision(Ball& iFirst, Ball& iSecond)
 {
   const auto sumOfRadiuses = iFirst.GetRadius() + iSecond.GetRadius();
