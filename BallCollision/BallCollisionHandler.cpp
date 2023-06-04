@@ -53,7 +53,7 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
   }
 
   auto size = iaBalls.size();
-  sf::Vector2f sqrMean(std::pow(sum.x / size, 2), std::pow(sum.y / size, 2));
+  sf::Vector2f sqrMean(static_cast<float>(std::pow(sum.x / size, 2)), static_cast<float>(std::pow(sum.y / size, 2)));
   sf::Vector2f meanOfSqr(sumSqr.x / size, sumSqr.y / size);
 
   sf::Vector2f sampVariance{ meanOfSqr - sqrMean };
@@ -66,13 +66,13 @@ void BallCollisionHandler::HandleCollision(Ball& iFirst, Ball& iSecond)
 {
   const auto sumOfRadiuses = iFirst.GetRadius() + iSecond.GetRadius();
   const auto centersSegment = iFirst.GetPosition() - iSecond.GetPosition();
-  const auto length = std::sqrt(std::pow(centersSegment.x, 2) + std::pow(centersSegment.y, 2));
+  const auto length = static_cast<float>(std::sqrt(std::pow(centersSegment.x, 2) + std::pow(centersSegment.y, 2)));
 
   auto hasCollision =  length < sumOfRadiuses + static_cast<double>(_tolerance);
 
   if (hasCollision) {
     auto normal = iSecond.GetPosition() - iFirst.GetPosition();
-    auto normalLen = std::sqrt(std::pow(normal.x, 2) + std::pow(normal.y, 2));
+    auto normalLen = static_cast<float>(std::sqrt(std::pow(normal.x, 2) + std::pow(normal.y, 2)));
     normal = sf::Vector2f(normal.x / normalLen, normal.y / normalLen);
 
     DevideBalls(iFirst, iSecond, length, normal);
@@ -111,7 +111,7 @@ void BallCollisionHandler::HandleWindowCollision(Ball& iBall)
 void BallCollisionHandler::DevideBalls(Ball& iFirst, Ball& iSecond, float iCentersDst, const sf::Vector2f& iNormal)
 {
   const auto sumOfRadiuses = iFirst.GetRadius() + iSecond.GetRadius();
-  float overlap = (sumOfRadiuses - iCentersDst + _tolerance) * 0.5;
+  float overlap = (sumOfRadiuses - iCentersDst + _tolerance) * 0.5f;
 
   iFirst.ShiftPosition(-iNormal * overlap);
   iSecond.ShiftPosition(iNormal * overlap);
@@ -144,8 +144,8 @@ void BallCollisionHandler::HitBalls(Ball& iFirst, Ball& iSecond, float iCentersD
   float newVel2x = tx * tp2 + iNormal.x * imp2;
   float newVel2y = ty * tp2 + iNormal.y * imp2;
 
-  float speed1 = std::sqrt(std::pow(newVel1x, 2) + std::pow(newVel1y, 2));
-  float speed2 = std::sqrt(std::pow(newVel2x, 2) + std::pow(newVel2y, 2));
+  float speed1 = static_cast<float>(std::sqrt(std::pow(newVel1x, 2) + std::pow(newVel1y, 2)));
+  float speed2 = static_cast<float>(std::sqrt(std::pow(newVel2x, 2) + std::pow(newVel2y, 2)));
 
   iFirst.SetDirection({ newVel1x / speed1, newVel1y / speed1 });
   iSecond.SetDirection({ newVel2x / speed2, newVel2y / speed2 });
