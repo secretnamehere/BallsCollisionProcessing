@@ -22,15 +22,15 @@ void BallCollisionApp::Init()
     Ball newBall;
     newBall.SetPosition({ static_cast<float>(rand() % WINDOW_X), static_cast<float>(rand() % WINDOW_Y) });
     newBall.SetDirection({ static_cast<float>((-5 + (rand() % 10))) / 3.f, static_cast<float>((-5 + (rand() % 10)) / 3.f) });
-    newBall.SetRadius(10 + rand() % 5);
-    newBall.SetSpeed(30 + rand() % 30);
+    newBall.SetRadius(static_cast<float>(10 + rand() % 5));
+    newBall.SetSpeed(static_cast<float>(30 + rand() % 30));
     _aBalls.push_back(newBall);
   }
 }
 
 void BallCollisionApp::StartRendering()
 {
-  srand(time(NULL));
+  srand(static_cast<unsigned int>(time(NULL)));
 
   // window.setFramerateLimit(60);
 
@@ -52,7 +52,7 @@ void BallCollisionApp::StartRendering()
     _fpsCounter.push(1.0f / (current_time - lastime));
     lastime = current_time;
 
-    collisionHandler.ProcessCollisions(_aBalls);
+    collisionHandler.Process(_aBalls);
 
     for (auto& ball : _aBalls)
       ball.Move(deltaTime);
