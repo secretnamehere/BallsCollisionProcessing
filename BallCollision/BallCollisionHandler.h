@@ -26,6 +26,7 @@ public:
 
 private:
   void HandleCollision(Ball& iFirst, Ball& iSecond);
+  void HandleWindowCollision(Ball& iBall);
   void DevideBalls(Ball& iFirst, Ball& iSecond, float iCentersDst, const sf::Vector2f& iNormal);
   void HitBalls(Ball& iFirst, Ball& iSecond, float iCentersDst, const sf::Vector2f& iNormal);
 

@@ -29,16 +29,6 @@ BallCollisionHandler::BallCollisionHandler(sf::RenderWindow* ipWindow)
 
 void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
 {
-  for (auto& ball : iaBalls) {
-    auto pos = ball.GetPosition();
-    auto radius = ball.GetRadius();
-    auto dir = ball.GetDirection();
-    if (pos.x + radius >= _pWindow->getSize().x || pos.x - radius <= 0)
-      ball.SetDirection({ -dir.x, dir.y });
-    if (pos.y + radius >= _pWindow->getSize().y || pos.y - radius <= 0)
-      ball.SetDirection({ dir.x, -dir.y });
-  }
-
   if (iaBalls.empty())
     return;
 
@@ -52,6 +42,7 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
     sum += pos;
     sumSqr += sf::Vector2f{ pos.x * pos.x, pos.y * pos.y };
 
+    HandleWindowCollision(curBall);
     for (size_t j = i + 1; j < iaBalls.size(); ++j) {
       auto& otherBall = iaBalls[j];
       if (!_comparator.HasProjectionsIntersection(curBall, otherBall))
@@ -89,6 +80,31 @@ void BallCollisionHandler::HandleCollision(Ball& iFirst, Ball& iSecond)
 
     iFirst.SetRandomColor();
     iSecond.SetRandomColor();
+  }
+}
+
+void BallCollisionHandler::HandleWindowCollision(Ball& iBall)
+{
+  auto& pos = iBall.GetPosition();
+  auto& dir = iBall.GetDirection();
+  auto radius = iBall.GetRadius();
+  auto size = _pWindow->getSize();
+
+  if (pos.x + radius + _tolerance >= size.x) {
+    iBall.SetPosition({ size.x - _tolerance - radius, pos.y });
+    iBall.SetDirection({ -dir.x, dir.y });
+  }
+  if (pos.x - radius - _tolerance <= 0) {
+    iBall.SetPosition({ radius + _tolerance, pos.y });
+    iBall.SetDirection({ -dir.x, dir.y });
+  }
+  if (pos.y + radius + _tolerance >= size.y) {
+    iBall.SetPosition({ pos.x, size.y - _tolerance - radius });
+    iBall.SetDirection({ dir.x, -dir.y });
+  }
+  if (pos.y - radius - _tolerance <= 0) {
+    iBall.SetPosition({ pos.x, radius + _tolerance });
+    iBall.SetDirection({ dir.x, -dir.y });
   }
 }
 
