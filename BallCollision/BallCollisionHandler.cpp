@@ -33,14 +33,16 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
     return;
 
   std::sort(iaBalls.begin(), iaBalls.end(), _comparator);
-  sf::Vector2f sum(0.f, 0.f);
-  sf::Vector2f sumSqr(0.f, 0.f);
+  float sumx{ 0.f };
+  float sumy{ 0.f };
+  float sumSqrx{ 0.f };
+  float sumSqry{ 0.f };
 
   for (size_t i = 0; i < iaBalls.size(); ++i) {
     auto& curBall = iaBalls[i];
     const auto& pos = curBall.GetPosition();
-    sum += pos;
-    sumSqr += sf::Vector2f{ pos.x * pos.x, pos.y * pos.y };
+    sumx += pos.x; sumy += pos.y;
+    sumSqrx += pos.x * pos.x; sumSqry += pos.y * pos.y;
 
     HandleWindowCollision(curBall);
     for (size_t j = i + 1; j < iaBalls.size(); ++j) {
@@ -53,11 +55,11 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
   }
 
   auto size = iaBalls.size();
-  sf::Vector2f sqrMean(static_cast<float>(std::pow(sum.x / size, 2)), static_cast<float>(std::pow(sum.y / size, 2)));
-  sf::Vector2f meanOfSqr(sumSqr.x / size, sumSqr.y / size);
-
-  sf::Vector2f sampVariance{ meanOfSqr - sqrMean };
-  unsigned int maxVarIdx = sampVariance.x > sampVariance.y ? 0 : 1;
+  auto sqrMeanx = std::pow(sumx / size, 2);
+  auto sqrMeany = std::pow(sumy / size, 2);
+  auto meanOfSqrx = sumSqrx / size;
+  auto meanOfSqry = sumSqry / size;
+  unsigned int maxVarIdx = (meanOfSqrx - sqrMeanx) > (meanOfSqry - sqrMeany) ? 0 : 1;
 
   _comparator.SetComparisonAxisIdx(maxVarIdx);
 }
