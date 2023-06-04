@@ -23,10 +23,17 @@ void Ball::Draw(sf::RenderWindow& iWindow)
   iWindow.draw(_SFMLRepresentation);
 }
 
-void Ball::MovePosition(const sf::Vector2f& iShift)
+void Ball::ShiftPosition(const sf::Vector2f& iShift)
 {
   _centerPosition.x += iShift.x;
   _centerPosition.y += iShift.y;
+}
+
+void Ball::Move(float iDeltaTime)
+{
+  float dx = _direction.x * _speed * iDeltaTime;
+  float dy = _direction.y * _speed * iDeltaTime;
+  ShiftPosition({ dx, dy });
 }
 
 void Ball::SetSpeed(float iSpeed)

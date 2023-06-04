@@ -146,11 +146,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
+    <ClCompile Include="BallCollisionApp.cpp" />
     <ClCompile Include="BallCollisionHandler.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="BallCollisionApp.h" />
     <ClInclude Include="BallCollisionHandler.h" />
     <ClInclude Include="MiddleAverageFilter.h" />
   </ItemGroup>

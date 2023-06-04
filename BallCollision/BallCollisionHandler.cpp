@@ -97,8 +97,8 @@ void BallCollisionHandler::DevideBalls(Ball& iFirst, Ball& iSecond, float iCente
   const auto sumOfRadiuses = iFirst.GetRadius() + iSecond.GetRadius();
   float overlap = (sumOfRadiuses - iCentersDst + _tolerance) * 0.5;
 
-  iFirst.MovePosition(-iNormal * overlap);
-  iSecond.MovePosition(iNormal * overlap);
+  iFirst.ShiftPosition(-iNormal * overlap);
+  iSecond.ShiftPosition(iNormal * overlap);
 }
 
 void BallCollisionHandler::HitBalls(Ball& iFirst, Ball& iSecond, float iCentersDst, const sf::Vector2f& iNormal)

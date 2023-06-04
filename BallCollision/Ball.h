@@ -10,7 +10,8 @@ public:
   explicit Ball(const sf::Vector2f& iPosition, const sf::Vector2f& iDirection, float iRadius = 1.f, float iSpeed = 0.f);
 
   void Draw(sf::RenderWindow& iWindow);
-  void MovePosition(const sf::Vector2f& iShift);
+  void ShiftPosition(const sf::Vector2f& iShift);
+  void Move(float iDeltaTime);
 
   void SetSpeed(float iSpeed);
   void SetRadius(float iRadius);
