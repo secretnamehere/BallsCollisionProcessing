@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include "Ball.h"
 #include <math.h>
 
@@ -21,6 +23,12 @@ void Ball::Draw(sf::RenderWindow& iWindow)
   iWindow.draw(_SFMLRepresentation);
 }
 
+void Ball::MovePosition(const sf::Vector2f& iShift)
+{
+  _centerPosition.x += iShift.x;
+  _centerPosition.y += iShift.y;
+}
+
 void Ball::SetSpeed(float iSpeed)
 {
   _speed = std::abs(iSpeed);
@@ -42,6 +50,11 @@ void Ball::SetPosition(const sf::Vector2f& iPosition)
   _centerPosition = iPosition;
 }
 
+void Ball::SetRandomColor()
+{
+  _SFMLRepresentation.setFillColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+}
+
 float Ball::GetSpeed() const
 {
   return _speed;
@@ -60,4 +73,9 @@ const sf::Vector2f& Ball::GetDirection() const
 const sf::Vector2f& Ball::GetPosition() const
 {
   return _centerPosition;
+}
+
+float Ball::GetMass() const
+{
+  return _density * M_PI * std::pow(_radius, 2);
 }
