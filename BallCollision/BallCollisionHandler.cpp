@@ -57,12 +57,7 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
       if (!_comparator.HasProjectionsIntersection(curBall, otherBall))
         break;
 
-      if (HasBallsCollision(curBall, otherBall)) {
-
-
-        curBall.SetRandomColor();
-        otherBall.SetRandomColor();
-      }
+      HandleCollision(curBall, otherBall);
     }
   }
 
@@ -76,19 +71,69 @@ void BallCollisionHandler::ProcessCollisions(std::vector<Ball>& iaBalls)
   _comparator.SetComparisonAxisIdx(maxVarIdx);
 }
 
-bool BallCollisionHandler::HasBallsCollision(const Ball& iFirst, const Ball& iSecond)
+void BallCollisionHandler::HandleCollision(Ball& iFirst, Ball& iSecond)
 {
   const auto sumOfRadiuses = iFirst.GetRadius() + iSecond.GetRadius();
   const auto centersSegment = iFirst.GetPosition() - iSecond.GetPosition();
   const auto length = std::sqrt(std::pow(centersSegment.x, 2) + std::pow(centersSegment.y, 2));
 
-  return length < sumOfRadiuses + static_cast<double>(_tolerance);
+  auto hasCollision =  length < sumOfRadiuses + static_cast<double>(_tolerance);
+
+  if (hasCollision) {
+    auto normal = iSecond.GetPosition() - iFirst.GetPosition();
+    auto normalLen = std::sqrt(std::pow(normal.x, 2) + std::pow(normal.y, 2));
+    normal = sf::Vector2f(normal.x / normalLen, normal.y / normalLen);
+
+    DevideBalls(iFirst, iSecond, length, normal);
+    HitBalls(iFirst, iSecond, length, normal);
+
+    iFirst.SetRandomColor();
+    iSecond.SetRandomColor();
+  }
 }
 
-void BallCollisionHandler::DevideBalls(Ball& iFirst, Ball& iSecond)
+void BallCollisionHandler::DevideBalls(Ball& iFirst, Ball& iSecond, float iCentersDst, const sf::Vector2f& iNormal)
 {
+  const auto sumOfRadiuses = iFirst.GetRadius() + iSecond.GetRadius();
+  float overlap = (sumOfRadiuses - iCentersDst + _tolerance) * 0.5;
+
+  iFirst.MovePosition(-iNormal * overlap);
+  iSecond.MovePosition(iNormal * overlap);
 }
 
-void BallCollisionHandler::HitBalls(Ball& iFirst, Ball& iSecond)
+void BallCollisionHandler::HitBalls(Ball& iFirst, Ball& iSecond, float iCentersDst, const sf::Vector2f& iNormal)
 {
+  const auto s1 = iFirst.GetSpeed(); const auto s2 = iSecond.GetSpeed();
+  const auto m1 = iFirst.GetMass(); const auto m2 = iSecond.GetMass();
+  const auto& d1 = iFirst.GetDirection();  const auto& d2 = iSecond.GetDirection();
+
+  // tangent
+  float tx = -iNormal.y;
+  float ty = iNormal.x;
+
+  // tangent projection
+  float tp1 = d1.x * s1 * tx + d1.y * s1 * ty;
+  float tp2 = d2.x * s2 * tx + d2.y * s2 * ty;
+
+  // normal projection
+  float np1 = d1.x * s1 * iNormal.x + d1.y * s1 * iNormal.y;
+  float np2 = d2.x * s2 * iNormal.x + d2.y * s2 * iNormal.y;
+
+  // impulses conservation
+  float imp1 = (np1 * (m1 - m2) + 2.0f * m2 * np2) / (m1 + m2);
+  float imp2 = (np2 * (m2 - m1) + 2.0f * m1 * np1) / (m1 + m2);
+
+  float newVel1x = tx * tp1 + iNormal.x * imp1;
+  float newVel1y = ty * tp1 + iNormal.y * imp1;
+  float newVel2x = tx * tp2 + iNormal.x * imp2;
+  float newVel2y = ty * tp2 + iNormal.y * imp2;
+
+  float speed1 = std::sqrt(std::pow(newVel1x, 2) + std::pow(newVel1y, 2));
+  float speed2 = std::sqrt(std::pow(newVel2x, 2) + std::pow(newVel2y, 2));
+
+  iFirst.SetDirection({ newVel1x / speed1, newVel1y / speed1 });
+  iSecond.SetDirection({ newVel2x / speed2, newVel2y / speed2 });
+
+  iFirst.SetSpeed(speed1);
+  iSecond.SetSpeed(speed2);
 }

@@ -25,13 +25,13 @@ public:
   void ProcessCollisions(std::vector<Ball>& iaBalls);
 
 private:
-  bool HasBallsCollision(const Ball& iFirst, const Ball& iSecond);
-  void DevideBalls(Ball& iFirst, Ball& iSecond);
-  void HitBalls(Ball& iFirst, Ball& iSecond);
+  void HandleCollision(Ball& iFirst, Ball& iSecond);
+  void DevideBalls(Ball& iFirst, Ball& iSecond, float iCentersDst, const sf::Vector2f& iNormal);
+  void HitBalls(Ball& iFirst, Ball& iSecond, float iCentersDst, const sf::Vector2f& iNormal);
 
 private:
   sf::RenderWindow* _pWindow{ nullptr };
   BallCollisionAxisComparator _comparator;
 
-  static constexpr float _tolerance{ 2.f };
+  static constexpr float _tolerance{ 1.f };
 };
