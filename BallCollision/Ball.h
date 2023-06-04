@@ -15,7 +15,7 @@ public:
 
   void SetSpeed(float iSpeed);
   void SetRadius(float iRadius);
-  void SetDirection(const sf::Vector2f& iDirection);
+  void SetDirection(const sf::Vector2f& iDirection, bool iNormilize = true);
   void SetPosition(const sf::Vector2f& iPosition);
   void SetRandomColor();
 

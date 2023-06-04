@@ -109,19 +109,19 @@ void BallCollisionHandler::HandleWindowCollision(Ball& iBall)
 
   if (pos.x + radius + _tolerance >= size.x) {
     iBall.SetPosition({ size.x - _tolerance - radius, pos.y });
-    iBall.SetDirection({ -dir.x, dir.y });
+    iBall.SetDirection({ -dir.x, dir.y }, false);
   }
   if (pos.x - radius - _tolerance <= 0) {
     iBall.SetPosition({ radius + _tolerance, pos.y });
-    iBall.SetDirection({ -dir.x, dir.y });
+    iBall.SetDirection({ -dir.x, dir.y }, false);
   }
   if (pos.y + radius + _tolerance >= size.y) {
     iBall.SetPosition({ pos.x, size.y - _tolerance - radius });
-    iBall.SetDirection({ dir.x, -dir.y });
+    iBall.SetDirection({ dir.x, -dir.y }, false);
   }
   if (pos.y - radius - _tolerance <= 0) {
     iBall.SetPosition({ pos.x, radius + _tolerance });
-    iBall.SetDirection({ dir.x, -dir.y });
+    iBall.SetDirection({ dir.x, -dir.y }, false);
   }
 }
 
@@ -164,8 +164,8 @@ void BallCollisionHandler::HitBalls(Ball& iFirst, Ball& iSecond, float iCentersD
   float speed1 = static_cast<float>(std::sqrt(std::pow(newVel1x, 2) + std::pow(newVel1y, 2)));
   float speed2 = static_cast<float>(std::sqrt(std::pow(newVel2x, 2) + std::pow(newVel2y, 2)));
 
-  iFirst.SetDirection({ newVel1x / speed1, newVel1y / speed1 });
-  iSecond.SetDirection({ newVel2x / speed2, newVel2y / speed2 });
+  iFirst.SetDirection({ newVel1x / speed1, newVel1y / speed1 }, false);
+  iSecond.SetDirection({ newVel2x / speed2, newVel2y / speed2 }, false);
 
   iFirst.SetSpeed(speed1);
   iSecond.SetSpeed(speed2);

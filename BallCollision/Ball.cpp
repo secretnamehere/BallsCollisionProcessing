@@ -46,10 +46,14 @@ void Ball::SetRadius(float iRadius)
   _radius = std::abs(iRadius);
 }
 
-void Ball::SetDirection(const sf::Vector2f& iDirection)
+void Ball::SetDirection(const sf::Vector2f& iDirection, bool iNormilize)
 {
-  const auto length = std::sqrt(std::pow(iDirection.x, 2) + std::pow(iDirection.y, 2));
-  _direction = length == 0 ? sf::Vector2f() : sf::Vector2f(iDirection.x / length, iDirection.y / length);
+  if (iNormilize) {
+    const auto length = static_cast<float>(std::sqrt(std::pow(iDirection.x, 2) + std::pow(iDirection.y, 2)));
+    _direction = length == 0 ? sf::Vector2f() : sf::Vector2f(iDirection.x / length, iDirection.y / length);
+  }
+  else
+    _direction = iDirection;
 }
 
 void Ball::SetPosition(const sf::Vector2f& iPosition)
@@ -84,5 +88,5 @@ const sf::Vector2f& Ball::GetPosition() const
 
 float Ball::GetMass() const
 {
-  return _density * M_PI * std::pow(_radius, 2);
+  return _density * static_cast<float>(M_PI * std::pow(_radius, 2));
 }
